@@ -65,3 +65,7 @@ button:focus-visible {
   button {
     background-color:rgb(117, 0, 89);
 }
+
+#chat {
+  width: 90%;
+}

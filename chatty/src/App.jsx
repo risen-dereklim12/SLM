@@ -11,7 +11,7 @@ function App() {
     if (!question.trim()) return
     setResponse("Thinking...")
     try {
-      const res = await fetch('http://localhost:5000/api/ask', {
+      const res = await fetch('http://127.0.0.1:5000/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -31,16 +31,16 @@ function App() {
       <div>
         <TextField
           id="chat"
-          label="Chatbot Response"
           variant="outlined"
           multiline
+          rows={20}
           value={response}
           InputProps={{
             readOnly: true,
           }}
           fullWidth
           minRows={4}
-          sx={{ backgroundColor: 'lightgray' }}
+          sx={{ backgroundColor: 'lightgray', overflowY: 'auto' }}
         />
       </div>
       <div className="card">
@@ -52,6 +52,7 @@ function App() {
             margin="dense"
             size="small"
             multiline
+            fullWidth
             rows={4}
             sx={{ height: 'auto', width: '777px' }}
             value={question}
