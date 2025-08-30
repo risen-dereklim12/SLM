@@ -11,7 +11,7 @@ function App() {
     if (!question.trim()) return
     setResponse("Thinking...")
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/ask', {
+      const res = await fetch('http://localhost:5050/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -57,6 +57,12 @@ function App() {
             sx={{ height: 'auto', width: '777px' }}
             value={question}
             onChange={e => setQuestion(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();   // prevent new line
+                handleSend();
+              }
+            }}
           />
           <Button
             variant="contained"

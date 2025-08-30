@@ -4,14 +4,19 @@ from slm import SLM
 import json
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}},
+     supports_credentials=False)
 
 @app.route('/api/ask', methods=['POST', 'OPTIONS'])
-@cross_origin(origins='http://localhost:5173')
+@cross_origin(origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+              allow_headers=["Content-Type"],
+              methods=["POST", "OPTIONS"])
+              
 def ask():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No JSON body found'}), 400
+    if request.method == "OPTIONS":
+        return ("", 204)
+
+    data = request.get_json(silent=True) or {}
     question = data.get('question', '')
     model = SLM("Derek")
     response = model.respond(question)
@@ -21,7 +26,6 @@ def ask():
             try:
                 # Parse line as JSON object
                 json_data = json.loads(line)
-                # Print message content
                 if "message" in json_data and "content" in json_data["message"]:
                         message += json_data["message"]["content"]
             except json.JSONDecodeError:
@@ -32,4 +36,4 @@ def ask():
     })
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(host="localhost", port=5050, debug=True)

@@ -33,13 +33,13 @@ class VectorClient:
         )
         return operation_info
 
-    def search(self, query_vector, city=None, limit=1):
+    def search(self, query_vector, param=None, limit=1):
         must_conditions = []
-        if city:
+        if param:
             must_conditions.append(
                 FieldCondition(
-                    key="city",
-                    match=MatchValue(value=city)
+                    key="section",
+                    match=MatchValue(value=param)
                 )
             )
         query_filter = Filter(must=must_conditions) if must_conditions else None
