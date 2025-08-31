@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from slm import SLM
 import json
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}},
@@ -18,7 +21,7 @@ def ask():
 
     data = request.get_json(silent=True) or {}
     question = data.get('question', '')
-    model = SLM("Derek")
+    model = SLM(config['RAG_MODEL'])
     response = model.respond(question)
     message = ""
     for line in response.iter_lines(decode_unicode=True):
@@ -36,4 +39,5 @@ def ask():
     })
 
 if __name__ == '__main__':
+    print(config['RAG_MODEL'])
     app.run(host="localhost", port=5050, debug=True)

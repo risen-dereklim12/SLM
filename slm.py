@@ -1,6 +1,7 @@
 import requests
 from vector.client import VectorClient
 from embedding.embedding import Embedding
+from qdrant_client.models import Distance
 import json
 
 class SLM:
@@ -11,11 +12,11 @@ class SLM:
 
     def respond(self, question): 
         # Query vector database for context
-        vector_db = VectorClient()
+        vector_db = VectorClient("PDPA", 1024, "http://localhost:6333", Distance.DOT)
         # embed question
         embedding = Embedding()
         question_embedding = embedding.encode(question)
-        context_result = vector_db.search(question_embedding["embeddings"][0], limit=7)
+        context_result = vector_db.search(question_embedding["embeddings"][0], limit=77)
         context = ""
         for cr in context_result:
             # print(cr)
@@ -23,9 +24,7 @@ class SLM:
         print(context)
         # Add the context to the question
         question = f"Answer the {question} as PDPA Chatbot based on this: {context}. Do not answer anything out of the context. Do not hallucinate.\
-            If the answer is not from the context, say 'I cannot find the answer in my knowledge base. Kindly reach out to a human for support'.\
-            If the reply from this the context provided is beyond your context window limit, reply 'I shall summarize the reply as it has exceeded \
-                my context window' and then reply with summary of the rest of the reply."
+            If the answer is not from the context, say 'I cannot find the answer in my knowledge base. Kindly reach out to a human for support'."
         # print(question)
         payload = {
             "model": self.model_name,  # Replace with the model name
