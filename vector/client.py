@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     from embedding import Embedding
     # import json
-    # documents = open("/Users/dlyf/SLM/vector/chunks/pdpa_2012_parts_chunks.jsonl")
+    # documents = open("/Users/dlyf/SLM/vector/chunks/document_to_be_chunked.jsonl")
     # # documents = documents.readlines()
     # documents = [json.loads(documents) for documents in documents.read().splitlines()]
     embedding = Embedding()
