@@ -27,7 +27,7 @@ function App() {
 
   return (
     <>
-      <h1>PDPA Chatbot</h1>
+      <h1>Offline Chatbot</h1>
       <div>
         <TextField
           id="chat"
@@ -51,15 +51,13 @@ function App() {
             variant="outlined"
             margin="dense"
             size="small"
-            multiline
             fullWidth
-            rows={4}
-            sx={{ height: 'auto', width: '777px' }}
+            sx={{ width: '777px' }}
             value={question}
             onChange={e => setQuestion(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();   // prevent new line
+              if (e.key === 'Enter') {
+                e.preventDefault();
                 handleSend();
               }
             }}
