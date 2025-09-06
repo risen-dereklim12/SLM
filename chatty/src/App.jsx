@@ -95,6 +95,8 @@ function App() {
         width: '70%',
         margin: '0 auto',
         p: { xs: 1, sm: 2 },
+        pt: { xs: 3, sm: 4 },
+        pb: { xs: 3, sm: 4 },
         bgcolor: 'background.default',
         color: 'text.primary'
       }}>
