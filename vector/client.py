@@ -4,29 +4,26 @@ from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, Fi
 # memory_size = number_of_vectors * vector_dimension * 4 bytes * 1.5
 
 class VectorClient:
-    def __init__(self, collection_name, vector_size, url, distance):
+    def __init__(self, url):
         self.client = QdrantClient(url=url)
-        self.collection_name = collection_name
-        self.vector_size = vector_size
-        self.distance = distance
 
-    def create_collection(self):
+    def create_collection(self, collection_name, vector_size, distance):
         collections = self.client.get_collections().collections
-        if any(c.name == self.collection_name for c in collections):
-            print(f"Collection '{self.collection_name}' already exists.")
+        if any(c.name == collection_name for c in collections):
+            print(f"Collection '{collection_name}' already exists.")
             return
         self.client.create_collection(
-            collection_name=self.collection_name,
-            vectors_config=VectorParams(size=self.vector_size, distance=self.distance),
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=vector_size, distance=distance),
         )
-        print(f"Collection '{self.collection_name}' created.")
+        print(f"Collection '{collection_name}' created.")
 
-    def upsert(self, points):
+    def upsert(self, points, collection_name):
         """
         points: list of PointStruct
         """
         operation_info = self.client.upsert(
-            collection_name=self.collection_name,
+            collection_name=collection_name,
             wait=True,
             points=points,
         )
@@ -52,20 +49,26 @@ class VectorClient:
         return results
 
 if __name__ == "__main__":
-    vector_client = VectorClient("PDPA", 1024, "http://localhost:6333", Distance.DOT)
+    vector_client = VectorClient("http://localhost:6333")
     
-    # vector_client.create_collection()
+    def create_collection(collection_name, vector_size, distance):
+        vector_client.create_collection(collection_name, vector_size, distance)
 
-    from embedding import Embedding
-    # import json
-    # documents = open("/Users/dlyf/SLM/vector/chunks/document_to_be_chunked.jsonl")
-    # # documents = documents.readlines()
-    # documents = [json.loads(documents) for documents in documents.read().splitlines()]
-    embedding = Embedding()
-    # points = embedding.embed(documents)
+    def insert_collection(documents_path):
+        from embedding import Embedding
+        import json
+        documents = documents_path
+        documents = documents.readlines()
+        documents = [json.loads(documents) for documents in documents.read().splitlines()]
+        embedding = Embedding()
+        points = embedding.embed(documents)
+        operation_info = vector_client.upsert(points, "PDPA")
+        print(operation_info)
     
-    # operation_info = vector_client.upsert(points)
-    # print(operation_info)
-    
-    search_result = vector_client.search(embedding.encode("What is PDPA?")["embeddings"][0], limit=77)
-    print(search_result)
+    def search(question_vector, limit):
+        search_result = vector_client.search(question_vector, limit=limit)
+        print(search_result)
+
+    # search(embedding.encode("What is PDPA?")["embeddings"][0], 77)
+    # insert_collection(open("/Users/dlyf/SLM/vector/chunks/document_to_be_chunked.jsonl"))
+    create_collection("chat_history", 1024, Distance.DOT)
