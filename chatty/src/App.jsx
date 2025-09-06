@@ -107,7 +107,7 @@ function App() {
               fontWeight: { xs: 500, sm: 400 }
             }}
           >
-            Offline Chatbot
+            {import.meta.env.VITE_APP_TITLE || 'Offline Chatbot'}
           </Typography>
           <IconButton
             onClick={() => setDarkMode(!darkMode)}
