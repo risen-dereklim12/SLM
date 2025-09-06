@@ -29,7 +29,7 @@ class VectorClient:
         )
         return operation_info
 
-    def search(self, query_vector, param=None, limit=7):
+    def search(self, query_vector, collection_name, param=None, limit=7):
         must_conditions = []
         if param:
             must_conditions.append(
@@ -40,13 +40,17 @@ class VectorClient:
             )
         query_filter = Filter(must=must_conditions) if must_conditions else None
         results = self.client.search(
-            collection_name=self.collection_name,
+            collection_name=collection_name,
             query_vector=query_vector,
             query_filter=query_filter,
             with_payload=True,
             limit=limit,
         )
+        # insert question matrix, results into chat_history with add_hstory() 
         return results
+
+# To-do: insert question into chat_history
+# def add_history(self):
 
 if __name__ == "__main__":
     vector_client = VectorClient("http://localhost:6333")
@@ -65,10 +69,14 @@ if __name__ == "__main__":
         operation_info = vector_client.upsert(points, "PDPA")
         print(operation_info)
     
-    def search(question_vector, limit):
-        search_result = vector_client.search(question_vector, limit=limit)
+    def search(question, collection_name, limit):
+        from embedding import Embedding
+        import json
+        embedding = Embedding()
+        question_vector = embedding.encode(question)["embeddings"][0]
+        search_result = vector_client.search(question_vector, collection_name, limit=limit)
         print(search_result)
 
-    # search(embedding.encode("What is PDPA?")["embeddings"][0], 77)
+    search("What is PDPA?", "PDPA", 77)
     # insert_collection(open("/Users/dlyf/SLM/vector/chunks/document_to_be_chunked.jsonl"))
-    create_collection("chat_history", 1024, Distance.DOT)
+    # create_collection("chat_history", 1024, Distance.DOT)

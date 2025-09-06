@@ -134,7 +134,7 @@ documents = [
 class Embedding:
     def __init__(self, model=config['EMBEDDING_MODEL']):
         self.model = model
-        self.vector_client = VectorClient("PDPA", 1024, "http://localhost:6333", Distance.DOT)
+        self.vector_client = VectorClient("http://localhost:6333")
 
     def create_collection(self):
         self.vector_client.create_collection()
